@@ -6,12 +6,14 @@ def bisection_method(a, b, function, eps):
 
     log = []
 
-    i = 1
+    i = 0
 
     while(True):
         
         x = (a+b)/2
         log.append([a,b,x])
+        if abs(a-b) <= eps or abs(function(x)) <= eps: break
+
         if function(a)*function(x) > 0:
             a = x
         else:
@@ -19,7 +21,6 @@ def bisection_method(a, b, function, eps):
         i+=1
         
         assert i < limit, "Не удалось найти решение за {0} итераций".format(limit)
-        if abs(a-b) <= eps or abs(function(x)) < eps: break
 
     return i, x, log
 
@@ -82,55 +83,57 @@ class F1(object):
         print(description)
 
     def comp_derivative(self, x):
+
+        sum_d = 0
         
         for i in range(self.n):
             sum_d += (x**(i))*self.coefs[i+1]*(i+1)
 
         return sum_d
 
-    class F2(object):
+class F2(object):
 
-        def __init__(self, coefs):
+    def __init__(self, coefs):
 
-            self.coefs = coefs
+        self.coefs = coefs
 
-        def __call__(self, x):
+    def __call__(self, x):
 
-            assert x >= - self.coefs[1]/self.coefs[0], "Невозможно вычислить значение функции в точке {0}".format(x)
+        assert x >= - self.coefs[1]/self.coefs[0], "Невозможно вычислить значение функции в точке {0}".format(x)
 
-            return (self.coefs[0]*x+self.coefs[1])**(0.5)+self.coefs[2]
+        return (self.coefs[0]*x+self.coefs[1])**(0.5)+self.coefs[2]
 
-        def comp_derivative(self,x):
+    def comp_derivative(self,x):
 
-            assert x > - self.coefs[0]/self.coefs[1], "Невозможно вычислить значение производной в точке {0}".format(x)
+        assert x > - self.coefs[0]/self.coefs[1], "Невозможно вычислить значение производной в точке {0}".format(x)
 
-        def print_description(self):
+    def print_description(self):
 
-            if self.coefs:
-                print ("sqrt({0}x+{1}) + {2}".format(*self.coefs))
-            else:
-                print ("sqrt({c_0*x+c_1) + c_3")
+        if self.coefs:
+            print ("sqrt({0}x+{1}) + {2}".format(*self.coefs))
+        else:
+            print ("sqrt({c_0*x+c_1) + c_3")
 
-    class F3(object):
+class F3(object):
 
-        def __init__(self, coefs):
+    def __init__(self, coefs):
 
-            self.coefs = coefs
+        self.coefs = coefs
 
-        def __call__(self, x):
+    def __call__(self, x):
 
-            return self.coefs[0]*(sin(self.coefs[1]*x))**2+self.coefs[2]
+        return self.coefs[0]*(sin(self.coefs[1]*x))**2+self.coefs[2]*x
 
-        def comp_derivative(self,x):
+    def comp_derivative(self,x):
 
-            return self.coefs[0]*self.coefs[1]*sin(2*self.coefs[1]*x)
+        return self.coefs[0]*self.coefs[1]*sin(2*self.coefs[1]*x)+self.coefs[2]
 
-        def print_description(self):
+    def print_description(self):
 
-            if self.coefs:
+        if self.coefs:
 
-                print("{0}sin({1}x) + {2}".format(*self.coefs))
+            print("{0}sin({1}x) + {2}x".format(*self.coefs))
 
-            else:
+        else:
 
-                print("c_0*sin(c_1*x) + c_2")
+            print("c_0*sin(c_1*x) + c_2*x")
